@@ -12,8 +12,6 @@ function App() {
   const [balAtomic, setBalAtomic] = useState(null);
   const [bal, setBal] = useState(null);
 
-  
-
   return (
     <div className="App">
       <header className="App-header">
