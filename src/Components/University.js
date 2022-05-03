@@ -1,32 +1,43 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import * as backend from '../build/index.main.mjs';
+import { loadStdlib } from '@reach-sh/stdlib';
+const reach = loadStdlib(process.env);
 
 function University(){
-    const [universities, setUniversities] = useState({});
+    const [universityCode, setUniversityCode] = useState(null);
+    const [account, setAccount] = useState(null);        
+    const [balance, setBalance] = useState(null);
+    const [contract, setContract] = useState(null);
+    const [contractInfo, setContractInfo] = useState(null);
+
+    function startWaiting() {     
+        console.log(account);   
+        setContract(account.contract(backend));
+        backend.University(contract, this);
+        setContractInfo(JSON.stringify( contract.getInfo(), null, 2));
+    }
 
     useEffect(() => {
-        // setAcc(() => reach.getDefaultAccount());
-        // setBalAtomic(() => reach.balanceOf(acc));
-        // setBal(() => reach.formatCurrency(balAtomic, 4));
-    
-        axios.get(`http://localhost/api/universities`)
-          .then(response => {
-             setUniversities(response.data.data);       
-          });    
-            
-      },[]);
+        async function setupAccount (){
+            const acc =  await reach.getDefaultAccount();
+            const balAtomic = await reach.balanceOf(acc);  
+            setAccount(acc);       
+            setBalance(reach.formatCurrency(balAtomic, 4));
+        }
+        setupAccount();
+    },[]);
 
-      return <div>University List
-                <select>
-                    {
-                        universities
-                        .map(university =>
-                            <option key={university.id}>{university.name} - {university.code}</option>
-                        )
-                    }
-                    </select>
-                <button>Request Transcript</button>
-            </div>;
+       return <Form>
+           <Form.Group className="mb-3" controlId="formBasicUniversityCode">       
+                <Form.Label>Enter University Code</Form.Label>
+                <Form.Control type="text" placeholder="University Code" 
+                    
+                    onChange={(e) => {setUniversityCode(e.target.value)}} />
+            </Form.Group>
+            <Button variant="primary" onClick={startWaiting}>Start</Button>
+       </Form>;
 }
 
 export default University;
