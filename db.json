@@ -1,0 +1,72 @@
+{"data":
+    [
+        {
+            "id":1,
+            "name":"IMrA6dPYqb",
+            "code":"18424",
+            "students" : {
+                "1234" : {
+                    "id" : 1,
+                    "name" : "test",
+                    "status" : 1
+                },
+                "2234" : {
+                    "id" : 2,
+                    "name" : "test 1",
+                    "status" : 0
+                }
+            }
+        },
+        {
+            "id":2,
+            "name":"KGsFJI5lSB",
+            "code":"15457",
+            "students" : {
+                "1334" : {
+                    "id" : 1,
+                    "name" : "test 2",
+                    "status" : 0
+                },
+                "2244" : {
+                    "id" : 2,
+                    "name" : "test 4",
+                    "status" : 1
+                }
+            }
+        },
+        {
+            "id":3,
+            "name":"EpOQyFFV4a",
+            "code":"11258",
+            "students" : {
+                "1235" : {
+                    "id" : 1,
+                    "name" : "test 5",
+                    "status" : 0
+                },
+                "2274" : {
+                    "id" : 2,
+                    "name" : "test 6",
+                    "status" : 1
+                }
+            }
+        },
+        {
+            "id":4,
+            "name":"nl9xxUoXVX",
+            "code":"19926",
+            "students" : {
+                "5234" : {
+                    "id" : 1,
+                    "name" : "test 7",
+                    "status" : 1
+                },
+                "6234" : {
+                    "id" : 2,
+                    "name" : "test 8",
+                    "status" : 1
+                }
+            }
+        }
+    ]
+}

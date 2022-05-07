@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
 
@@ -7,20 +6,25 @@ function Requester(){
     const [university, setUniversity] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [studentCode, setStudentCode] = useState(null);
-
+    const [studentFound, setStudentFound] = useState(false);
 
     useEffect(() => {
-        // setAcc(() => reach.getDefaultAccount());
-        // setBalAtomic(() => reach.balanceOf(acc));
-        // setBal(() => reach.formatCurrency(balAtomic, 4));
-        
-        axios.get(`http://localhost/api/universities`)
-          .then(response => {
-             setUniversities(response.data.data);    
-             setLoading(false);   
-          });    
+        const getUniversities = async () => {
+            const universitiesFromServer = await fetchUniversities();
+            setUniversities(universitiesFromServer);    
+            setLoading(false);   
+        }
+
+        getUniversities()
             
-      },[universities]);
+      },[]);
+
+      const fetchUniversities = async () => {
+        const res = await fetch('http://localhost:5000/data')
+        const data = await res.json()
+    
+        return data
+      }
 
       const handleSubmit = (event) => {
             event.preventDefault();
