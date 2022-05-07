@@ -42,7 +42,7 @@ function Requester(){
                         { universities !== {} &&
                             universities
                             .map(university =>
-                                <option value={university.id}>{university.name} - {university.code}</option>
+                                <option value={university.code}>{university.name} - {university.code}</option>
                             )
                         }
                     </Form.Select>
