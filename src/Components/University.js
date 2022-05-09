@@ -16,15 +16,16 @@ function University(){
     const [deadline, setDeadline] = useState(null);
     const [foundUniversity, setFoundUniversity] = useState(null);
 
-    function startWaiting() {  
+    const startWaiting = async () => {  
         checkUniversity();
         if(foundUniversity){
             const contr = account.contract(backend);
+            console.log(contr);
             setContract(contr);
             setDeadline({ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]);
             
             backend.University(contr,Object({universityCode, deadline}));
-            setContractInfo(JSON.stringify( contract.getInfo(), null, 2));
+            setContractInfo(JSON.stringify( await contract.getInfo(), null, 2));
         }
     }
 
