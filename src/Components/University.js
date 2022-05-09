@@ -25,7 +25,8 @@ function University(){
             setDeadline({ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]);
             
             backend.University(contr,Object({universityCode, deadline}));
-            setContractInfo(JSON.stringify( await contract.getInfo(), null, 2));
+            let contractInfo = JSON.stringify( await contract.getInfo(), null, 2);
+            setContractInfo(contractInfo);
         }
     }
 
