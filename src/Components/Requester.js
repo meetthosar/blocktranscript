@@ -12,8 +12,9 @@ function Requester(){
     const [university, setUniversity] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [studentCode, setStudentCode] = useState(null);
-    const [studentFound, setStudentFound] = useState(false);
+    const [studentFound, setStudentFound] = useState(null);
     const [contractInfo,setContractInfo] = useState(null);
+    const [transcript, setTrascript] = useState(null);
 
     const [account, setAccount] = useState(null);        
     const [balance, setBalance] = useState(null);
@@ -36,11 +37,14 @@ function Requester(){
 
         const filteredUniversities = data.filter(d => { return d.code === university })
 
-        let found = filteredUniversities[0].students[studentCode] !== undefined
-console.log(found);
+        let student = filteredUniversities[0].students[studentCode];
+        let found = student !== undefined
+
         setStudentFound(found);
-        if(found)
+        if(found){
             setupAccount();
+            setTrascript(Object({name:student.name, code:studentCode, status:student.status == 1}));
+          }
         
       }
 
@@ -53,8 +57,8 @@ console.log(found);
       const handleSubmit = (event) => {
         event.preventDefault();
         const contr = account.contract(backend, JSON.parse(contractInfo));
-        console.log(contr);
-        backend.Requester(contr,Object({studentCode}));
+        setLoading(false);   
+        backend.Requester(contr,Object({studentCode, transcript, sendTranscript}));
       }
 
       const setupAccount = async () => {
@@ -65,12 +69,16 @@ console.log(found);
         setBalance(balance);
     }
 
+    const sendTranscript = async(transcript) => {
+      console.log(transcript);
+  }
+
       if (isLoading) {
         return <div className="App">Loading...</div>;
       }
 
       return <Form>
-          {!studentFound && studentFound !== null ? <Alert variant="danger">
+          {(studentFound !== null && !studentFound) ? <Alert variant="danger">
             Student not found</Alert> : ""}
           {!studentFound ? 
                 <Form.Group className="mb-3" controlId="formBasicUniversity">

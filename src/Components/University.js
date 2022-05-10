@@ -13,7 +13,7 @@ function University(){
     const [balance, setBalance] = useState(null);
     const [contract, setContract] = useState(null);
     const [contractInfo, setContractInfo] = useState(null);
-    const [deadline, setDeadline] = useState(null);
+    // const [deadline, setDeadline] = useState(null);
     const [foundUniversity, setFoundUniversity] = useState(null);
 
     const startWaiting = async () => {  
@@ -22,9 +22,9 @@ function University(){
             const contr = account.contract(backend);
             console.log(contr);
             setContract(contr);
-            setDeadline({ETH: 10, ALGO: 100, CFX: 1000}[reach.connector]);
-            
-            backend.University(contr,Object({universityCode, deadline}));
+            let deadline = {ETH: 10, ALGO: 100, CFX: 1000}[reach.connector];
+            let price = reach.parseCurrency(0.01);
+            backend.University(contr,Object({universityCode, price ,deadline, sendTranscript}));
             let contractInfo = JSON.stringify( await contract.getInfo(), null, 2);
             setContractInfo(contractInfo);
         }
@@ -47,6 +47,9 @@ function University(){
         setBalance(balance);
     }
 
+    const sendTranscript = async(transcript) => {
+        console.log(transcript);
+    }
     useEffect(() => {
        
     },[]);
