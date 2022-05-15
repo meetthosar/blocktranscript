@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Form, Button, Alert } from 'react-bootstrap';
+import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import * as backend from '../build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
@@ -16,8 +16,9 @@ function Requester(){
     const [contractInfo,setContractInfo] = useState(null);
     const [transcript, setTrascript] = useState(null);
 
-    const [account, setAccount] = useState(null);        
+    // const [account, setAccount] = useState(null);        
     const [balance, setBalance] = useState(null);
+    const [serving, setServing] = useState(false);
 
     useEffect(() => {
         const getUniversities = async () => {
@@ -29,24 +30,7 @@ function Requester(){
         getUniversities();
             
       },[]);
-
-      const checkStudent = async (event) => {
-        event.preventDefault();
-        const res = await fetch('http://localhost:5000/data')
-        const data = await res.json();
-
-        const filteredUniversities = data.filter(d => { return d.code === university })
-
-        let student = filteredUniversities[0].students[studentCode];
-        let found = student !== undefined
-
-        setStudentFound(found);
-        if(found){
-            setupAccount();
-            setTrascript(Object({name:student.name, code:studentCode, status:student.status == 1}));
-          }
-        
-      }
+      
 
       const fetchUniversities = async () => {
         const res = await fetch('http://localhost:5000/data')
@@ -54,37 +38,53 @@ function Requester(){
         return data
       }
 
-      const handleSubmit = (event) => {
-        event.preventDefault();
-        const contr = account.contract(backend, JSON.parse(contractInfo));
-        setLoading(false);   
-        backend.Requester(contr,Object({studentCode, transcript, sendTranscript}));
+      const handleSubmit = async () => {
+        // event.preventDefault();
+        // console.log("In Handle Submit");
+        // const [student, found] = await checkStudent();
+        if(studentFound){
+          const account = await setupAccount();
+          console.log(account);
+          const contr = account.contract(backend, JSON.parse(contractInfo));
+          backend.Requester(contr,Object({university, studentCode, isServing, sendTranscript}));
+        }
       }
 
       const setupAccount = async () => {
         const acc = await reach.getDefaultAccount(reach.parseCurrency(1000));
         const balAtomic = await reach.balanceOf(acc);  
-        setAccount(acc);       
+        // setAccount(acc);       
         const balance = await reach.formatCurrency(balAtomic, 4);
         setBalance(balance);
+        return acc;
     }
 
     const sendTranscript = async(transcript) => {
       console.log(transcript);
-  }
+    }
 
-      if (isLoading) {
-        return <div className="App">Loading...</div>;
-      }
+    const isServing = async (status) => {
+      setServing(status);        
+    }
+
+    const resetParameters = () => {
+      
+    }
+      // if (isLoading) {
+      //   return <div className="App">Loading...</div>;
+      // }
 
       return <Form>
+        <fieldset disabled={isLoading}>
           {(studentFound !== null && !studentFound) ? <Alert variant="danger">
             Student not found</Alert> : ""}
+          {serving ? <Alert variant="info">
+              Univeristy is serving requester</Alert> : ""}
           {!studentFound ? 
                 <Form.Group className="mb-3" controlId="formBasicUniversity">
                     <Form.Label>Select University</Form.Label>
                     <Form.Select value={university} onChange={(e) => {setUniversity(e.target.value)}}>
-                        { universities !== {} &&
+                        { !isLoading && universities !== {} &&
                             universities
                             .map(university =>
                                 <option value={university.code}>{university.name} - {university.code}</option>
@@ -100,7 +100,7 @@ function Requester(){
                 </Form.Group>
                 :""}
             {!studentFound ? 
-                <Button type="submit" variant="primary" onClick={checkStudent}>Check</Button>
+                <Button type="submit" variant="primary" onClick={() => { setStudentFound(true) }}>Check</Button>
                 :""}
              {studentFound ? 
                 <Form.Group className="mb-3" controlId="formBasicContractInfo">
@@ -109,8 +109,11 @@ function Requester(){
                 </Form.Group>
                 :""}   
                 {studentFound ? 
-            <Button type="submit" variant="primary" onClick={handleSubmit}>Request Transcript</Button>
+            <Button variant="primary" onClick={() =>{ setLoading(true); handleSubmit();}}>Request Transcript</Button>
             :""}
+
+            {isLoading? <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner> : ""}
+            </fieldset>
             </Form> ;   
        
 }
