@@ -58,8 +58,8 @@ function University(){
 
     const sendTranscript = async(transcript) => {
         console.log(transcript);
-        await resetContractParameters();
-        await startWaiting();
+        // await resetContractParameters();
+        // await startWaiting();
     }
 
     const isServing = async (status) => {
@@ -71,24 +71,23 @@ function University(){
         const res = await fetch('http://localhost:5000/data')
         const data = await res.json();
 
-        const filteredUniversities = data.filter(d => { return d.code === university })
+        const filteredUniversities = data.filter(d => { return d.code === university.toString() })
 
         let found = filteredUniversities.length !== 0;
         if(found){
-          var student = filteredUniversities[0].students[studentCode];
+          var student = filteredUniversities[0].students[studentCode.toNumber()];
           found = student !== undefined 
         }
         // return [student, found];
         
           if(found){
             // setupAccount();
-            var transcript = Object({name:student.name, code:studentCode, status:student.status == 1, found:true});
+            var transcript = Object({name:student.name, code:studentCode.toString(), status:student.status == 1, found:true});
                        
           }else{          
-            var transcript = Object({name:"Not Found", code:"Not Found", status:false, found:false});
+            var transcript = Object({name:"Not Found", code:studentCode.toString(), status:false, found:false});
             }
-
-            backend.University(contract, transcript); 
+            return transcript;
         
       }
 
@@ -103,7 +102,7 @@ function University(){
     }
 
     useEffect(() => {
-        
+        // setContract(contract);
     },[]);
 
        return <Form>
