@@ -3,13 +3,13 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import * as backend from '../build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
-const reach = loadStdlib(process.env);
+const reach = loadStdlib('ALGO');
 reach.setWalletFallback(reach.walletFallback({
   providerEnv: 'TestNet', MyAlgoConnect }));
 
 function University(){
     const [universityCode, setUniversityCode] = useState(null);
-    // const [account, setAccount] = useState(null);        
+    const [account, setAccount] = useState(null);        
     const [balance, setBalance] = useState(null);
     const [contract, setContract] = useState(null);
     const [contractInfo, setContractInfo] = useState(null);
@@ -24,18 +24,39 @@ function University(){
 
     const startWaiting = async () => {  
         const foundUniversity = checkUniversity();
-        if(foundUniversity){            
-            const account = await setupAccount();
-            const contr = await account.contract(backend);
-            const interaction = {universityCode, price ,deadline, isServing, requestTranscript, sendTranscript};
+        if(foundUniversity){      
+
+            let promiseToCreateContract = new Promise( async (createContract, throwError) => {
+                if(account === null){      
+                    var acc = await setupAccount();
+                    await setAccount(acc)
+                }
+
+                if(acc !== null)
+                    createContract(acc);
+                else
+                    throwError();
+            });
+
+            promiseToCreateContract.then(
+                async (account) => {
+                    const contr = await account.contract(backend);
+                    const interaction = {universityCode, price ,deadline, isServing, requestTranscript, sendTranscript};
+                    
+                    setAccount(account);
+                    setContract(contr);            
+                    
+                    backend.University(contr,Object(interaction));
+                    
+                    const contractInfo = JSON.stringify( await contr.getInfo(), null, 2);
+                    setContractInfo(contractInfo);
+                },
+                () => { console.log("Failed to create account"); }
+            );
             
-            setupAccount(account);
-            setContract(contr);            
             
-            backend.University(contr,Object(interaction));
+                
             
-            const contractInfo = JSON.stringify( await contr.getInfo(), null, 2);
-            setContractInfo(contractInfo);
         }
     }
 
@@ -58,8 +79,9 @@ function University(){
 
     const sendTranscript = async(transcript) => {
         console.log(transcript);
-        // await resetContractParameters();
-        // await startWaiting();
+
+        await resetContractParameters();
+        await startWaiting();
     }
 
     const isServing = async (status) => {
@@ -82,10 +104,10 @@ function University(){
         
           if(found){
             // setupAccount();
-            var transcript = Object({name:student.name, code:studentCode.toString(), status:student.status == 1, found:true});
+            var transcript = Object({name:student.name, code:studentCode.toString(), status:student.status === 1, found:true});
                        
           }else{          
-            var transcript = Object({name:"Not Found", code:studentCode.toString(), status:false, found:false});
+             transcript = Object({name:"Not Found", code:studentCode.toString(), status:false, found:false});
             }
             return transcript;
         
@@ -117,7 +139,7 @@ function University(){
                 <Form.Group className="mb-3" controlId="formBasicUniversityCode">       
                         <Form.Label>Enter University Code</Form.Label>
                         
-                        <Form.Control type="text" placeholder="University Code" 
+                        <Form.Control type="text" placeholder="University Code" value={universityCode}
                             onChange={(e) => {setUniversityCode(e.target.value)}} />
                     </Form.Group> 
                     : "Waiting For Requester"}

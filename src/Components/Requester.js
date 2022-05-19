@@ -3,6 +3,7 @@ import { Form, Button, Alert, Spinner } from 'react-bootstrap';
 import * as backend from '../build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
+import ExportPdfComponent from '../export-pdf.component.js';
 const reach = loadStdlib(process.env);
 reach.setWalletFallback(reach.walletFallback({
   providerEnv: 'TestNet', MyAlgoConnect }));
@@ -61,6 +62,8 @@ function Requester(){
 
     const sendTranscript = async(transcript) => {
       console.log(transcript);
+      setTrascript(transcript);
+      setLoading(false);
     }
 
     const isServing = async (status) => {
@@ -105,13 +108,13 @@ function Requester(){
              {studentFound ? 
                 <Form.Group className="mb-3" controlId="formBasicContractInfo">
                     <Form.Label>Enter Contract Information</Form.Label>
-                    <Form.Control type="text" placeholder="Contract Inofrmation" value={contractInfo}  onChange={(e) => {setContractInfo(e.target.value)}} />
+                    <Form.Control type="text" placeholder="Contract Inofrmation" value={contractInfo} disabled={transcript !== null}  onChange={(e) => {setContractInfo(e.target.value)}} />
                 </Form.Group>
                 :""}   
-                {studentFound ? 
+                {studentFound && transcript === null  ? 
             <Button variant="primary" onClick={() =>{ setLoading(true); handleSubmit();}}>Request Transcript</Button>
             :""}
-
+            {transcript !== null ? <ExportPdfComponent transcript={transcript}/> : "" }
             {isLoading? <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner> : ""}
             </fieldset>
             </Form> ;   
