@@ -79,13 +79,14 @@ function University(){
 
     const sendTranscript = async(transcript) => {
         console.log(transcript);
-
+        
         await resetContractParameters();
         await startWaiting();
     }
 
     const isServing = async (status) => {
-        setServing(status);        
+        setServing(status);  
+        // setIsLoading(null);      
     }
 
     const requestTranscript = async (university, studentCode) => {
@@ -120,7 +121,7 @@ function University(){
         setContractInfo(null);
         setFoundUniversity(null);
         // setIsLoading(null);
-        // setServing(null);
+        setServing(null);
     }
 
     useEffect(() => {
@@ -131,22 +132,25 @@ function University(){
                 <fieldset disabled={isLoading}>
                 {(studentFound !== null && !studentFound) ? <Alert variant="danger">
                 Student not found</Alert> : ""}
+                {serving ? <Alert variant="info">
+                    Univeristy is serving requester</Alert> : ""}
                 {!foundUniversity && foundUniversity!==null ? <Alert variant="danger">
                     Univeristy not found</Alert> : ""}
                 {balance !== null? <p>Initial Balance - {balance}</p> : ""}
                 {contractInfo !== null ? <p>Contract Info - {contractInfo}</p> : "" }
-                {contractInfo === null?
+            
                 <Form.Group className="mb-3" controlId="formBasicUniversityCode">       
                         <Form.Label>Enter University Code</Form.Label>
                         
                         <Form.Control type="text" placeholder="University Code" value={universityCode}
                             onChange={(e) => {setUniversityCode(e.target.value)}} />
                     </Form.Group> 
-                    : "Waiting For Requester"}
+                    
 
                     {contractInfo === null? <Button onClick={() => { setIsLoading(true);  startWaiting()}} variant="primary">Start</Button>
                     : ""}
-                   {isLoading? <Spinner animation="border" role="status"><span className="visually-hidden">Loading...</span></Spinner> : ""}
+                   {isLoading && !serving? <Spinner animation="border" role="status"></Spinner> : ""}
+                   {isLoading && !serving && contractInfo !== null ? <span >Waiting for Requester...</span> : ""}
                     </fieldset>
             </Form>;
 }

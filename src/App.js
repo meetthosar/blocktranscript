@@ -47,7 +47,7 @@ function App() {
 
   return <Container className="p-3">
     <Card>
-      <Card.Header><h1 className="header">Welcome To Block Transcript</h1></Card.Header>
+      <Card.Header><h1 className="header">Welcome To BlockTranscript</h1></Card.Header>
       <Card.Body>
           {isUniversity === 1 ? <University/> : ""}
           {isRequester === 1 ? <Requester/> : ""}

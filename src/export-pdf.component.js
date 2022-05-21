@@ -8,7 +8,7 @@ class ExportPdfComponent extends React.Component {
       return (
         <div>
 
-           <h1>Export HTMl Table in PDF File</h1> 
+           <h1>Export Transcript in PDF File</h1> 
 
           <TableComponent ref={(response) => (this.componentRef = response)} transcript={this.props.transcript} />
           

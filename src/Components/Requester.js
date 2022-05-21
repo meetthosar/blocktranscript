@@ -4,7 +4,7 @@ import * as backend from '../build/index.main.mjs';
 import { loadStdlib } from '@reach-sh/stdlib';
 import { ALGO_MyAlgoConnect as MyAlgoConnect } from '@reach-sh/stdlib';
 import ExportPdfComponent from '../export-pdf.component.js';
-const reach = loadStdlib(process.env);
+const reach = loadStdlib('ALGO');
 reach.setWalletFallback(reach.walletFallback({
   providerEnv: 'TestNet', MyAlgoConnect }));
 
@@ -64,6 +64,7 @@ function Requester(){
       console.log(transcript);
       setTrascript(transcript);
       setLoading(false);
+      setServing(null);
     }
 
     const isServing = async (status) => {
@@ -82,7 +83,7 @@ function Requester(){
           {(studentFound !== null && !studentFound) ? <Alert variant="danger">
             Student not found</Alert> : ""}
           {serving ? <Alert variant="info">
-              Univeristy is serving requester</Alert> : ""}
+              Waiting for response from Univeristy</Alert> : ""}
           {!studentFound ? 
                 <Form.Group className="mb-3" controlId="formBasicUniversity">
                     <Form.Label>Select University</Form.Label>
