@@ -18,3 +18,5 @@ You may also see any lint errors in the console.
 
 Launches the Json server for university database. Open http://localhost:5000/data to view data in browser.
 
+Reach code is kept in the reach_code folder
+
